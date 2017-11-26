@@ -139,11 +139,14 @@ class ConvNet():
             sys.stdout.flush()
             
             # 保存模型
-            if epoch <= 1000 and epoch % 100 == 0 or \
-                epoch <= 10000 and epoch % 1000 == 0:
-                saver_path = self.saver.save(
+            #if epoch <= 1000 and epoch % 100 == 0 or \
+            #    epoch <= 10000 and epoch % 1000 == 0:
+            #    saver_path = self.saver.save(
+            #        self.sess, os.path.join(backup_path, 'model_%d.ckpt' % (epoch)))
+            #    print(os.path.join(backup_path, 'model_%d.ckpt' % (epoch)))
+            saver_path = self.saver.save(
                     self.sess, os.path.join(backup_path, 'model_%d.ckpt' % (epoch)))
-                
+            print(os.path.join(backup_path, 'model_%d.ckpt' % (epoch)))   
         self.sess.close()
                 
     def test(self, dataloader, backup_path, epoch, batch_size=128):
@@ -152,7 +155,8 @@ class ConvNet():
         # 读取模型
         self.saver = tf.train.Saver(write_version=tf.train.SaverDef.V2)
         model_path = os.path.join(backup_path, 'model_%d.ckpt' % (epoch))
-        assert(os.path.exists(model_path+'.index'))
+        print(model_path)
+        #assert(os.path.exists(model_path+'.index'))
         self.saver.restore(self.sess, model_path)
         print('read model from %s' % (model_path))
         # 在测试集上计算准确率

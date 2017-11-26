@@ -1,27 +1,16 @@
-
-# coding: utf-8
-
-# In[2]:
-
-
-# %load cifar10.py
+# -*- encoding: utf8 -*-
 import pickle
 import numpy
 import random
 import matplotlib.pyplot as plt
 import platform
 import cv2
-import os
-import tensorflow as tf
-from PIL import Image
-import numpy as np
 
 
 class Corpus:
     
     def __init__(self):
-        #self.load_cifar10('data/CIFAR10_data')
-        self.load_cifar10_dataset('/home/dp/down/cifar10/cifar-10-unpack/classify') #目标文件夹')
+        self.load_cifar10('data/CIFAR10_data')
         self._split_train_valid(valid_rate=0.9)
         self.n_train = self.train_images.shape[0]
         self.n_valid = self.valid_images.shape[0]
@@ -32,104 +21,6 @@ class Corpus:
         thresh = int(images.shape[0] * valid_rate)
         self.train_images, self.train_labels = images[0:thresh,:,:,:], labels[0:thresh]
         self.valid_images, self.valid_labels = images[thresh:,:,:,:], labels[thresh:]
-    #从分类文件夹中读取数据    
-    def load_cifar10_dataset(self, directory):
-        
-        images, labels = [], []
-        # 读取训练集
-        train_dir=os.path.join(directory,'train')
-        train_classlist=os.listdir(train_dir)
-    
-        filenames=list()
-        labels=list()
-        for classes in train_classlist:
-            class_path=os.path.join(train_dir,classes)
-            filelist=os.listdir(class_path)
-            print('classname='+classes)
-            for file in filelist:
-                filefullName=os.path.join(class_path,file)
-                #filenames.append(filefullName)
-                #image_string = tf.read_file(filefullName)
-                #image_decoded = tf.image.decode_png(image_string, channels=3)
-                #image_resized = tf.image.resize_images(image_decoded, [32, 32])
-                image_decoded = Image.open(filefullName)
-                image_decoded = np.array(image_decoded, dtype=np.uint8)
-
-                # 此时已经是一个 np.array 了，可以对它进行任意处理
-                image_decoded.reshape(32, 32, 3)
-                image_decoded = image_decoded.astype(float)
-                images.append(image_decoded)
-                #labels.append(classes)
-                labels.append(train_classlist.index(classes))
-                #print(filefullName)       
-        #print(filenames,labels)   
-        
-        
-        training_data = list(zip(images,labels))
-        np.random.shuffle(training_data)
-        images,labels = zip(*training_data)
-        
-        
-        images = numpy.array(images, dtype='float')
-        labels = numpy.array(labels, dtype='int')
-        
-        #print(images.shape)
-        #print(labels.shape)
-        
-        
-        self.train_images, self.train_labels = images, labels
-        
-        
-        # 读取测试集
-        images, labels = [], []
-        test_dir=os.path.join(directory,'test')
-        test_classlist=os.listdir(test_dir)
-    
-        filenames=list()
-        labels=list()
-        for classes in test_classlist:
-            class_path=os.path.join(test_dir,classes)
-            filelist=os.listdir(class_path)
-            print('classname='+classes)
-            for file in filelist:
-                filefullName=os.path.join(class_path,file)
-                #filenames.append(filefullName)
-                #image_string = tf.read_file(filefullName)
-                #image_decoded = tf.image.decode_png(image_string, channels=3)
-                #image_resized = tf.image.resize_images(image_decoded, [32, 32])
-                image_decoded = Image.open(filefullName)
-                image_decoded = np.array(image_decoded, dtype=np.uint8)
-
-                # 此时已经是一个 np.array 了，可以对它进行任意处理
-                image_decoded.reshape(32, 32, 3)
-                image_decoded = image_decoded.astype(float)
-                images.append(image_decoded)
-                
-                #labels.append(classes)
-                labels.append(train_classlist.index(classes))
-                #print(filefullName)       
-        #print(filenames,labels)   
-        test_data = list(zip(images,labels))
-        np.random.shuffle(test_data)
-        images,labels = zip(*test_data)
-        images = numpy.array(images, dtype='float')
-        labels = numpy.array(labels, dtype='int')
-        
-        self.test_images, self.test_labels = images, labels
-        
-    
-        
-        
-    
-    # 函数的功能时将filename对应的图片文件读进来，并缩放到统一的大小
-    def _parse_function(filename, label):
-        image_string = tf.read_file(filename)
-        image_decoded = tf.image.decode_png(image_string, channels=3)
-        image_resized = tf.image.resize_images(image_decoded, [32, 32])
-
-        #one_hot = tf.one_hot(label, 10) #one_hot = tf.one_hot(label, NUM_CLASSES)
-        return image_resized, label
-        #return image_resized, one_hot
     
     def load_cifar10(self, directory):
         # 读取训练集
@@ -148,6 +39,7 @@ class Corpus:
             labels += cifar10[b"labels"]
         images = numpy.array(images, dtype='float')
         labels = numpy.array(labels, dtype='int')
+        print(labels)
         self.train_images, self.train_labels = images, labels
         # 读取测试集
         images, labels = [], []
@@ -245,4 +137,3 @@ class Corpus:
             images[i,:,:,:] = new_image
         
         return images
-

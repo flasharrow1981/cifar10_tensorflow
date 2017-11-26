@@ -64,19 +64,13 @@ class Corpus:
                 #print(filefullName)       
         #print(filenames,labels)   
         
-        
-        training_data = list(zip(images,labels))
-        np.random.shuffle(training_data)
-        images,labels = zip(*training_data)
-        
-        
         images = numpy.array(images, dtype='float')
         labels = numpy.array(labels, dtype='int')
         
-        #print(images.shape)
-        #print(labels.shape)
-        
-        
+        training_data = np.hstack(images, labels)
+        np.random.shuffle(training_data)
+        images = training_data[:, :-1]
+        labels = training_data[:, -1]
         self.train_images, self.train_labels = images, labels
         
         
@@ -109,12 +103,13 @@ class Corpus:
                 labels.append(train_classlist.index(classes))
                 #print(filefullName)       
         #print(filenames,labels)   
-        test_data = list(zip(images,labels))
-        np.random.shuffle(test_data)
-        images,labels = zip(*test_data)
+        
         images = numpy.array(images, dtype='float')
         labels = numpy.array(labels, dtype='int')
-        
+        test_data = np.hstack(images, labels)
+        np.random.shuffle(test_data)
+        images = test_data[:, :-1]
+        labels = test_data[:, -1]
         self.test_images, self.test_labels = images, labels
         
     
